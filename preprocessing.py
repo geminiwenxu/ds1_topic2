@@ -4,12 +4,22 @@ from sklearn.preprocessing import LabelEncoder
 
 def read_data(path):
     df = pd.read_csv(path, delimiter=';')
-    return df
+    df1 = df[df.y == 'yes']
+    df2 = df[df.y == 'no']
+    size_pos = len(df1.index)
+    size_neg = len(df2.index)
+    if size_neg > size_pos:
+        ratio = size_neg / size_pos
+    else:
+        ratio = size_pos / size_neg
+    return df, size_pos, size_neg, ratio
 
 
 if __name__ == '__main__':
     path = "Data/bank-additional-full.csv"
-    df = read_data(path)
+    df, size_pos, size_neg, ratio = read_data(path)
+    print("size of positive class: ", size_pos, "size of negative class: ", size_neg, "The ration between two classes",
+          ratio)
 
     # one-hot encoding
     dum_df = pd.get_dummies(data=df, columns=['job', 'marital', 'contact', 'default', 'housing', 'loan'])
@@ -26,6 +36,4 @@ if __name__ == '__main__':
     cols = result.columns.tolist()
     print(cols)
     print(len(cols))
-    result.to_csv('numerical_data.csv', header=cols, index=False)
-
-
+    result.to_csv('Data/numerical_data.csv', header=cols, index=False)
