@@ -46,6 +46,7 @@ def combine(path, cols):
 
 if __name__ == '__main__':
     imbalanced_df = pd.read_csv("Data/numerical_data.csv", delimiter=',')
+    print(imbalanced_df.shape)
     cols = imbalanced_df.columns.tolist()
     training_cols = cols[:39]
 
@@ -57,5 +58,6 @@ if __name__ == '__main__':
     for name in ls_paths:
         print(name)
         total_df = combine(name, cols)
+        print(total_df.shape)
         print("metrics of" + name + "dataset")
         logistic_reg(total_df)
