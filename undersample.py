@@ -30,14 +30,14 @@ def centroids(size_minority, majority_class):
     print(df.shape)
 
 
-def random(size_minority, majority_class):
-    km = KMeans(n_clusters=10, init='k-means++').fit(majority_class)
+def random(K, size_minority, majority_class):
+    km = KMeans(n_clusters=K, init='k-means++').fit(majority_class)
     clusters_index = km.fit_predict(majority_class)
     majority_class['cluster'] = clusters_index
     majority_class_cluster = majority_class
-    size_instance = int(size_minority / 10)
+    size_instance = int(size_minority / K)
     random_sample = pd.DataFrame()
-    for i in range(10):
+    for i in range(K):
         random_sample = random_sample.append(
             majority_class_cluster[majority_class_cluster.cluster == i].sample(n=size_instance, replace=True),
             ignore_index=True)
@@ -61,17 +61,17 @@ def top_one(size_minority, majority_class, cols):
     print(df.shape)
 
 
-def top_n(size_minority, majority_class, cols):
-    km = KMeans(n_clusters=10, init='k-means++').fit(majority_class)
+def top_n(K, size_minority, majority_class, cols):
+    km = KMeans(n_clusters=K, init='k-means++').fit(majority_class)
     centroids = km.cluster_centers_
-    size_instance = int(size_minority / 10)
+    size_instance = int(size_minority / K)
     arr_majority_class = majority_class.to_numpy()
     neighbors = NearestNeighbors(n_neighbors=size_instance).fit(majority_class)
     TopN_neigbours = neighbors.kneighbors(centroids, return_distance=False)
     n_neig = pd.DataFrame(columns=cols)
-    ls_index=[]
-    ls_neig=[]
-    for i in range(10):
+    ls_index = []
+    ls_neig = []
+    for i in range(K):
         for j in range(size_instance):
             index = TopN_neigbours[i][j]
             ls_index.append(index)
@@ -85,6 +85,7 @@ def top_n(size_minority, majority_class, cols):
 
 
 if __name__ == '__main__':
+    K = 10
     path = "Data/numerical_data.csv"
     majority_class, minority_class, size_minority = read_data(path)
     minority_class.to_csv('Data/minority_class')
@@ -92,7 +93,7 @@ if __name__ == '__main__':
     print(cols)
     print(len(cols))
 
-    # centroids(size_minority, majority_class)
-    # random(size_minority, majority_class)
-    # top_one(size_minority, majority_class, cols)
-    # top_n(size_minority, majority_class, cols)
+    centroids(size_minority, majority_class)
+    random(K, size_minority, majority_class)
+    top_one(size_minority, majority_class, cols)
+    top_n(K, size_minority, majority_class, cols)
