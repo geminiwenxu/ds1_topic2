@@ -1,5 +1,6 @@
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
+import matplotlib.pyplot as plt
 
 
 def read_data(path):
@@ -20,7 +21,13 @@ if __name__ == '__main__':
     df, size_pos, size_neg, ratio = read_data(path)
     print("size of positive class: ", size_pos, "size of negative class: ", size_neg, "The ration between two classes",
           ratio)
-
+    ls_labels = ["positive samples=4640 ", "negative samples=36548"]
+    share = [size_pos, size_neg]
+    figureObject, axesObject = plt.subplots()
+    axesObject.pie(share, labels=ls_labels, autopct='%1.2f', startangle=120)
+    axesObject.axis('equal')
+    plt.title("class distribution")
+    # plt.show()
     # one-hot encoding
     dum_df = pd.get_dummies(data=df, columns=['job', 'marital', 'contact', 'default', 'housing', 'loan'])
     one_df = dum_df.drop(['month', 'day_of_week'], axis=1)
