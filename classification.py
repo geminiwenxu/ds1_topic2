@@ -4,12 +4,14 @@ from sklearn.linear_model import LogisticRegression
 from sklearn import metrics
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.metrics import classification_report
 
 
 def logistic_reg(df):
+    class_name = ['positive', 'negative']
     X = df[training_cols]
     y = df['y_cat']
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0, stratify=y)
     ls_accuracy = []
     ls_precision = []
     ls_recall = []
@@ -30,6 +32,10 @@ def logistic_reg(df):
         fpr, tpr, thresholds = metrics.roc_curve(y_test, y_pred, pos_label=None)
         auc = metrics.auc(fpr, tpr)
         ls_auc.append(auc)
+    logistic_regression = LogisticRegression(max_iter=100)
+    logistic_regression.fit(X_train, y_train)
+    y_pred = logistic_regression.predict(X_test)
+    print(classification_report(y_test, y_pred, target_names=class_name))
     return ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc
 
 
@@ -53,25 +59,25 @@ def combine(path, cols):
         df = pd.read_csv('Data/n_neig.csv', delimiter=',')
         df.drop(['Unnamed: 0'], axis=1, inplace=True)
         total_df = pd.concat([df, minority])
+    else:
+        df = pd.read_csv("Data/numerical_data.csv", delimiter=',')
+        total_df = df
     return total_df
 
 
 if __name__ == '__main__':
     imbalanced_df = pd.read_csv("Data/numerical_data.csv", delimiter=',')
-    # print(imbalanced_df.shape)
     cols = imbalanced_df.columns.tolist()
     training_cols = cols[:39]
 
-    print("metrics of imbalanced dataset")
-    logistic_reg(imbalanced_df)
-
-    ls_paths = ["centroids", "random",
+    ls_paths = ["imbalanced", "centroids", "random",
                 "one_neig", "n_neig"]
     for name in ls_paths:
         total_df = combine(name, cols)
+        print(total_df.shape)
         ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc = logistic_reg(total_df)
-        plt.plot(np.linspace(10, 100, 90), ls_auc, label=f"{name}")
+        plt.plot(np.linspace(10, 100, 90), ls_accuracy, label=f"{name}")
         plt.xlabel("iterations")
-        plt.ylabel("auc")
+        plt.ylabel("accuracy")
         plt.legend()
     plt.show()
