@@ -62,7 +62,6 @@ def plot_classification_report(cr, name, with_avg_total=False, cmap=plt.cm.Blues
     plt.xticks(x_tick_marks, ['precision', 'recall', 'f1-score'], rotation=45)
     plt.yticks(y_tick_marks, classes)
     plt.tight_layout()
-    plt.ylabel('Classes')
     plt.xlabel('Measures')
 
 
@@ -92,9 +91,9 @@ if __name__ == '__main__':
     ls_paths = ["imbalanced", "centroids", "random",
                 "one_neig", "n_neig"]
 
-    # total_df = combine(ls_paths[0], cols)
-    # logistic_reg(total_df, ls_paths[0])
-    # plt.savefig(f"{ls_paths[0]}.")
+    total_df = combine(ls_paths[0], cols)
+    logistic_reg(total_df, ls_paths[0])
+    plt.savefig(f"{ls_paths[0]}.")
 
     # total_df = combine(ls_paths[1], cols)
     # logistic_reg(total_df, ls_paths[1])
@@ -108,7 +107,7 @@ if __name__ == '__main__':
     # logistic_reg(total_df, ls_paths[3])
     # plt.savefig(f"{ls_paths[3]}.")
 
-    total_df = combine(ls_paths[4], cols)
-    logistic_reg(total_df, ls_paths[4])
-    plt.savefig(f"{ls_paths[4]}.")
+    # total_df = combine(ls_paths[4], cols)
+    # logistic_reg(total_df, ls_paths[4])
+    # plt.savefig(f"{ls_paths[4]}.")
 
