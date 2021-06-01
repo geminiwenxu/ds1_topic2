@@ -38,11 +38,7 @@ def convert_to_numerical(df):
     one_df['poutcome_cat'] = label_encoder.fit_transform(df['poutcome'])
     one_df['y_cat'] = label_encoder.fit_transform(df['y'])
     result = one_df.drop(['education', 'poutcome', 'y'], axis=1)
-
-    # assigning cols
     # cols = result.columns.tolist()
-    # print(cols)
-    # print(len(cols))
     # result.to_csv('Data/numerical_data.csv', header=cols, index=False)
     return result
 

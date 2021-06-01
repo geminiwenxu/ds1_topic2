@@ -94,12 +94,9 @@ def top_n(K, majority_class, cols):
 
 
 def combine_data(k, path, minority, majority_class):
-    imbalanced_df = pd.read_csv("/Users/wenxu/PycharmProjects/DS/Data/numerical_data.csv", delimiter=',')
-    cols = imbalanced_df.columns.tolist()
-
     if path == "centroids":
         df = pd.read_csv("/Users/wenxu/PycharmProjects/DS/Data/centroids.csv", delimiter=',')
-        df.columns = cols
+        df.columns = Config.cols
         total_df = pd.concat([df, minority])
     elif path == "random":
         random_sample = random(k, majority_class)
@@ -111,7 +108,7 @@ def combine_data(k, path, minority, majority_class):
         df.drop(['Unnamed: 0'], axis=1, inplace=True)
         total_df = pd.concat([df, minority])
     elif path == "n_neig":
-        n_neig_sample = top_n(k, majority_class, cols)
+        n_neig_sample = top_n(k, majority_class, Config.cols)
         df = n_neig_sample
         total_df = pd.concat([df, minority])
     else:

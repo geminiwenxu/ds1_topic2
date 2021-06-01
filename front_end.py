@@ -7,6 +7,7 @@ from config import Config
 from preprocessing import read_original_data, data_ratio, convert_to_numerical
 from undersample import combine_data, read_numerical_data
 from classification import logistic_reg
+import altair as alt
 
 
 def bank_marketing():
@@ -26,7 +27,7 @@ def bank_marketing():
     st.dataframe(numerical_df)
 
     option = st.sidebar.selectbox(
-        'Metrics selection (comparison of different methods) ',
+        'Metrics selection (k=10) ',
         ['Accuracy', 'Precision', 'Recall', 'F1 score', 'AUC'])
     st.header('selected metric：' + option)
     cols = numerical_df.columns.tolist()
@@ -55,7 +56,7 @@ def bank_marketing():
         for name in ls_paths:
             total_df = combine(name, cols)
             ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc = logistic_reg(total_df)
-            all_ls_recall.append(ls_precision)
+            all_ls_recall.append(ls_recall)
         chart_data = pd.DataFrame((np.array(all_ls_recall)).T, columns=ls_paths)
         st.line_chart(chart_data)
 
@@ -64,7 +65,7 @@ def bank_marketing():
         for name in ls_paths:
             total_df = combine(name, cols)
             ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc = logistic_reg(total_df)
-            all_ls_f1_score.append(ls_precision)
+            all_ls_f1_score.append(ls_f1)
         chart_data = pd.DataFrame((np.array(all_ls_f1_score)).T, columns=ls_paths)
         st.line_chart(chart_data)
     else:
@@ -72,7 +73,7 @@ def bank_marketing():
         for name in ls_paths:
             total_df = combine(name, cols)
             ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc = logistic_reg(total_df)
-            all_ls_auc.append(ls_precision)
+            all_ls_auc.append(ls_auc)
         chart_data = pd.DataFrame((np.array(all_ls_auc)).T, columns=ls_paths)
         st.line_chart(chart_data)
 
@@ -81,7 +82,6 @@ def bank_marketing():
         ["imbalanced", "centroids", "random", "one_neig", "n_neig"])
     st.header('selected method：' + option)
 
-    ls_paths = ["imbalanced", "centroids", "random", "one_neig", "n_neig"]
     if option == "centroids":
         k = None
         total_df = combine_data(k, option, minority_class, majority_class)
@@ -89,7 +89,7 @@ def bank_marketing():
         ls_metrics = np.vstack((np.array(ls_accuracy), np.array(ls_precision), np.array(ls_recall),
                                 np.array(ls_f1), np.array(ls_auc)))
         chart_data = pd.DataFrame(ls_metrics.T, columns=["accuracy", "precision", "recall", "f1", "auc"])
-        st.line_chart(chart_data)
+        st.bar_chart(chart_data, width=100)
 
     elif option == "one_neig":
         k = None
@@ -98,7 +98,8 @@ def bank_marketing():
         ls_metrics = np.vstack((np.array(ls_accuracy), np.array(ls_precision), np.array(ls_recall),
                                 np.array(ls_f1), np.array(ls_auc)))
         chart_data = pd.DataFrame(ls_metrics.T, columns=["accuracy", "precision", "recall", "f1", "auc"])
-        st.line_chart(chart_data)
+
+        st.bar_chart(chart_data)
 
     elif option == "random":
         num_cluster = st.number_input("Number of cluster")
@@ -110,7 +111,8 @@ def bank_marketing():
             ls_metrics = np.vstack((np.array(ls_accuracy), np.array(ls_precision), np.array(ls_recall),
                                     np.array(ls_f1), np.array(ls_auc)))
             chart_data = pd.DataFrame(ls_metrics.T, columns=["accuracy", "precision", "recall", "f1", "auc"])
-            st.line_chart(chart_data)
+            st.bar_chart(chart_data)
+
     elif option == "n_neig":
         num_cluster = st.number_input("Number of cluster")
         if num_cluster > 1:
@@ -121,7 +123,7 @@ def bank_marketing():
             ls_metrics = np.vstack((np.array(ls_accuracy), np.array(ls_precision), np.array(ls_recall),
                                     np.array(ls_f1), np.array(ls_auc)))
             chart_data = pd.DataFrame(ls_metrics.T, columns=["accuracy", "precision", "recall", "f1", "auc"])
-            st.line_chart(chart_data)
+            st.bar_chart(chart_data)
     else:
         k = None
         total_df = combine_data(k, option, minority_class, majority_class)
@@ -129,7 +131,16 @@ def bank_marketing():
         ls_metrics = np.vstack((np.array(ls_accuracy), np.array(ls_precision), np.array(ls_recall),
                                 np.array(ls_f1), np.array(ls_auc)))
         chart_data = pd.DataFrame(ls_metrics.T, columns=["accuracy", "precision", "recall", "f1", "auc"])
-        st.line_chart(chart_data)
+        st.bar_chart(chart_data)
+
+    st.header('100 iterations and k=10')
+    df = pd.DataFrame(np.array([["Original Imbalanced", 0.91, 0.66, 0.4, 0.50, 0.69, ],
+                                ["K-means++ and Centroids", 0.73, 0.72, 0.77, 0.74, 0.73],
+                                ["K-means++ and Random sampling", 0.68, 0.69, 0.65, 0.67, 0.68],
+                                ["K-means++ and Top1 centroids’ nearest neighbor", 0.73, 0.72, 0.76, 0.74, 0.73],
+                                ["K-means++ and TopN centroids’ nearest neighbor", 0.71, 0.73, 0.68, 0.70, 0.71]]),
+                      columns=(["dataset", "accuracy", "precision", "recall", "f1", "auc"]))
+    st.table(df)
 
 
 if __name__ == '__main__':
