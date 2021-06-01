@@ -7,12 +7,12 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import classification_report
 
 
-def combine(path, cols):
+def combine_data(path):
     total_df = pd.DataFrame
     minority = pd.read_csv('/Users/wenxu/PycharmProjects/DS/Data/minority_class', delimiter=',')
     minority.drop(['Unnamed: 0'], axis=1, inplace=True)
     if path == "centroids":
-        df = pd.read_csv("/Users/wenxu/PycharmProjects/DS/Data/centroids.csv", delimiter=',')
+        df = pd.read_csv("/Users/wenxu/PycharmProjects/DS/Data/minority_class", delimiter=',')
         df.columns = cols
         total_df = pd.concat([df, minority])
     elif path == "random":
@@ -65,7 +65,10 @@ def plot_classification_report(cr, name, with_avg_total=False, cmap=plt.cm.Blues
     plt.xlabel('Measures')
 
 
-def logistic_reg(df, name):
+def logistic_regression(df, name):
+    imbalanced_df = pd.read_csv("/Data/numerical_data.csv", delimiter=',')
+    cols = imbalanced_df.columns.tolist()
+    training_cols = cols[:39]
     class_name = ['negative', 'positive']
     X = df[training_cols]
     y = df['y_cat']
@@ -85,15 +88,15 @@ def logistic_reg(df, name):
 
 
 if __name__ == '__main__':
-    imbalanced_df = pd.read_csv("/Users/wenxu/PycharmProjects/DS/Data/numerical_data.csv", delimiter=',')
+    imbalanced_df = pd.read_csv("/Data/numerical_data.csv", delimiter=',')
     cols = imbalanced_df.columns.tolist()
     training_cols = cols[:39]
     ls_paths = ["imbalanced", "centroids", "random",
                 "one_neig", "n_neig"]
 
-    total_df = combine(ls_paths[0], cols)
-    logistic_reg(total_df, ls_paths[0])
-    plt.savefig(f"{ls_paths[0]}.")
+    # total_df = combine_data(ls_paths[0], cols)
+    # logistic_regression(total_df, ls_paths[0])
+    # plt.savefig(f"{ls_paths[0]}.")
 
     # total_df = combine(ls_paths[1], cols)
     # logistic_reg(total_df, ls_paths[1])
@@ -110,4 +113,3 @@ if __name__ == '__main__':
     # total_df = combine(ls_paths[4], cols)
     # logistic_reg(total_df, ls_paths[4])
     # plt.savefig(f"{ls_paths[4]}.")
-

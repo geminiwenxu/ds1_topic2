@@ -3,10 +3,14 @@ from sklearn.cluster import KMeans
 from numpy import savetxt
 from sklearn.metrics import pairwise_distances_argmin_min
 from sklearn.neighbors import NearestNeighbors
+from preprocessing import read_original_data, convert_to_numerical
+from config import Config
+from classification import logistic_reg
 
 
-def read_data(path):
-    df = pd.read_csv(path, delimiter=',')
+def read_numerical_data(numerical_df):
+    df = numerical_df
+    # df = pd.read_csv(path, delimiter=',')
     df1 = df[df.y_cat == 1]
     df2 = df[df.y_cat == 0]
     print("size of positive classs", len(df1.index))
@@ -22,7 +26,8 @@ def read_data(path):
     return majority_class, minority_class, size_minority
 
 
-def centroids(size_minority, majority_class):
+def centroids(majority_class):
+    size_minority = 4640
     km = KMeans(n_clusters=size_minority, init='k-means++').fit(majority_class)
     centroids = km.cluster_centers_
     savetxt('Data/centroids.csv', centroids, delimiter=',')
@@ -30,7 +35,8 @@ def centroids(size_minority, majority_class):
     print(df.shape)
 
 
-def random(K, size_minority, majority_class):
+def random(K, majority_class):
+    size_minority = 4640
     km = KMeans(n_clusters=K, init='k-means++').fit(majority_class)
     clusters_index = km.fit_predict(majority_class)
     majority_class['cluster'] = clusters_index
@@ -41,9 +47,10 @@ def random(K, size_minority, majority_class):
         random_sample = random_sample.append(
             majority_class_cluster[majority_class_cluster.cluster == i].sample(n=size_instance, replace=True),
             ignore_index=True)
-    random_sample.to_csv('Data/random.csv')
-    df = pd.read_csv('Data/random.csv', delimiter=',')
-    print(df.shape)
+    return random_sample
+    # random_sample.to_csv('Data/random.csv')
+    # df = pd.read_csv('Data/random.csv', delimiter=',')
+    # print(df.shape)
 
 
 def top_one(size_minority, majority_class, cols):
@@ -61,7 +68,8 @@ def top_one(size_minority, majority_class, cols):
     print(df.shape)
 
 
-def top_n(K, size_minority, majority_class, cols):
+def top_n(K, majority_class, cols):
+    size_minority = 4640
     km = KMeans(n_clusters=K, init='k-means++').fit(majority_class)
     centroids = km.cluster_centers_
     size_instance = int(size_minority / K)
@@ -79,21 +87,46 @@ def top_n(K, size_minority, majority_class, cols):
             ls_neig.append(neighbor)
     for q in range(size_minority):
         n_neig.loc[q] = ls_neig[q].tolist()
-    n_neig.to_csv('Data/n_neig.csv')
-    df = pd.read_csv('Data/n_neig.csv', delimiter=',')
-    print(df.shape)
+    return n_neig
+    # n_neig.to_csv('Data/n_neig.csv')
+    # df = pd.read_csv('Data/n_neig.csv', delimiter=',')
+    # print(df.shape)
+
+
+def combine_data(k, path, minority, majority_class):
+    imbalanced_df = pd.read_csv("/Users/wenxu/PycharmProjects/DS/Data/numerical_data.csv", delimiter=',')
+    cols = imbalanced_df.columns.tolist()
+
+    if path == "centroids":
+        df = pd.read_csv("/Users/wenxu/PycharmProjects/DS/Data/centroids.csv", delimiter=',')
+        df.columns = cols
+        total_df = pd.concat([df, minority])
+    elif path == "random":
+        random_sample = random(k, majority_class)
+        df = random_sample
+        df.drop(['cluster'], axis=1, inplace=True)
+        total_df = pd.concat([df, minority])
+    elif path == "one_neig":
+        df = pd.read_csv('/Users/wenxu/PycharmProjects/DS/Data/one_neig.csv', delimiter=',')
+        df.drop(['Unnamed: 0'], axis=1, inplace=True)
+        total_df = pd.concat([df, minority])
+    elif path == "n_neig":
+        n_neig_sample = top_n(k, majority_class, cols)
+        df = n_neig_sample
+        total_df = pd.concat([df, minority])
+    else:
+        df = pd.read_csv("/Users/wenxu/PycharmProjects/DS/Data/numerical_data.csv", delimiter=',')
+        total_df = df
+    print(total_df)
+    return total_df
 
 
 if __name__ == '__main__':
-    K = 10
-    path = "Data/numerical_data.csv"
-    majority_class, minority_class, size_minority = read_data(path)
-    minority_class.to_csv('Data/minority_class')
-    cols = majority_class.columns.tolist()
-    print(cols)
-    print(len(cols))
-
-    centroids(size_minority, majority_class)
-    random(K, size_minority, majority_class)
-    top_one(size_minority, majority_class, cols)
-    top_n(K, size_minority, majority_class, cols)
+    K = None
+    path = Config.original_file_path
+    df, size_pos, size_neg, ratio = read_original_data(path)
+    numerical_df = convert_to_numerical(df)
+    majority_class, minority_class, size_minority = read_numerical_data(numerical_df)
+    total_df = combine_data(K, "centroids", minority_class, majority_class)
+    ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc = logistic_reg(total_df)
+    print(len(ls_accuracy))

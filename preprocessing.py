@@ -1,9 +1,10 @@
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 import matplotlib.pyplot as plt
+from config import Config
 
 
-def read_data(path):
+def read_original_data(path):
     df = pd.read_csv(path, delimiter=';')
     df1 = df[df.y == 'yes']
     df2 = df[df.y == 'no']
@@ -16,18 +17,17 @@ def read_data(path):
     return df, size_pos, size_neg, ratio
 
 
-if __name__ == '__main__':
-    path = "Data/bank-additional-full.csv"
-    df, size_pos, size_neg, ratio = read_data(path)
-    print("size of positive class: ", size_pos, "size of negative class: ", size_neg, "The ration between two classes",
-          ratio)
+def data_ratio(size_pos, size_neg):
     ls_labels = ["positive samples=4640 ", "negative samples=36548"]
     share = [size_pos, size_neg]
     figureObject, axesObject = plt.subplots()
     axesObject.pie(share, labels=ls_labels, autopct='%1.2f', startangle=120)
     axesObject.axis('equal')
     plt.title("class distribution")
-    # plt.show()
+    return figureObject
+
+
+def convert_to_numerical(df):
     # one-hot encoding
     dum_df = pd.get_dummies(data=df, columns=['job', 'marital', 'contact', 'default', 'housing', 'loan'])
     one_df = dum_df.drop(['month', 'day_of_week'], axis=1)
@@ -40,7 +40,18 @@ if __name__ == '__main__':
     result = one_df.drop(['education', 'poutcome', 'y'], axis=1)
 
     # assigning cols
-    cols = result.columns.tolist()
-    print(cols)
-    print(len(cols))
-    result.to_csv('Data/numerical_data.csv', header=cols, index=False)
+    # cols = result.columns.tolist()
+    # print(cols)
+    # print(len(cols))
+    # result.to_csv('Data/numerical_data.csv', header=cols, index=False)
+    return result
+
+
+if __name__ == '__main__':
+    path = Config.original_file_path
+    df, size_pos, size_neg, ratio = read_original_data(path)
+    print("size of positive class: ", size_pos, "size of negative class: ", size_neg, "The ratio between two classes",
+          ratio)
+    data_ratio(size_pos, size_neg)
+    result = convert_to_numerical(df)
+    print(result)
