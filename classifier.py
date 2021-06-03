@@ -10,6 +10,8 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from config import Config
+from sklearn.naive_bayes import GaussianNB
+from sklearn.ensemble import RandomForestClassifier
 
 
 def combine(path, cols):
@@ -78,7 +80,6 @@ def logistic_reg(df):
 
 
 def svm(df):
-    class_name = ['negative', 'positive']
     X = df[Config.training_cols]
     y = df['y_cat']
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0, stratify=y)
@@ -106,16 +107,89 @@ def svm(df):
     return ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc
 
 
-if __name__ == '__main__':
+def nb(df):
+    X = df[Config.training_cols]
+    y = df['y_cat']
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0, stratify=y)
+    ls_accuracy = []
+    ls_precision = []
+    ls_recall = []
+    ls_f1 = []
+    ls_auc = []
+    gnb = GaussianNB()
+    gnb.fit(X_train, y_train)
+    y_pred = gnb.predict(X_test)
+    accuracy = metrics.accuracy_score(y_test, y_pred)
+    ls_accuracy.append(accuracy)
+    precision = metrics.precision_score(y_test, y_pred)
+    ls_precision.append(precision)
+    recall = metrics.recall_score(y_test, y_pred)
+    ls_recall.append(recall)
+    f1 = metrics.f1_score(y_test, y_pred)
+    ls_f1.append(f1)
+    fpr, tpr, thresholds = metrics.roc_curve(y_test, y_pred, pos_label=None)
+    auc = metrics.auc(fpr, tpr)
+    ls_auc.append(auc)
+    return ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc
 
+
+def random_forest(df):
+    X = df[Config.training_cols]
+    y = df['y_cat']
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0, stratify=y)
+    ls_accuracy = []
+    ls_precision = []
+    ls_recall = []
+    ls_f1 = []
+    ls_auc = []
+    clf = RandomForestClassifier(max_depth=20, random_state=0)
+    clf.fit(X_train, y_train)
+    y_pred = clf.predict(X_test)
+    accuracy = metrics.accuracy_score(y_test, y_pred)
+    ls_accuracy.append(accuracy)
+    precision = metrics.precision_score(y_test, y_pred)
+    ls_precision.append(precision)
+    recall = metrics.recall_score(y_test, y_pred)
+    ls_recall.append(recall)
+    f1 = metrics.f1_score(y_test, y_pred)
+    ls_f1.append(f1)
+    fpr, tpr, thresholds = metrics.roc_curve(y_test, y_pred, pos_label=None)
+    auc = metrics.auc(fpr, tpr)
+    ls_auc.append(auc)
+    return ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc
+
+
+if __name__ == '__main__':
     ls_paths = ["imbalanced", "centroids", "random",
                 "one_neig", "n_neig"]
+    # for name in ls_paths:
+    #     total_df = combine(name, Config.cols)
+    #     print(total_df.shape)
+    #     ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc = nb(total_df)
+    #     print(ls_accuracy)
+    #     plt.plot(np.linspace(10, 100, 90), ls_accuracy, label=f"{name}")
+    #     plt.xlabel("iterations")
+    #     plt.ylabel("accuracy")
+    #     plt.legend()
+    # plt.show()
+
+    all_ls_accuracy = []
+    all_ls_precision = []
+    all_ls_recall = []
+    all_ls_f1 = []
+    all_ls_auc = []
     for name in ls_paths:
         total_df = combine(name, Config.cols)
         print(total_df.shape)
-        ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc = svm(total_df)
-        plt.plot(np.linspace(10, 100, 90), ls_accuracy, label=f"{name}")
-        plt.xlabel("iterations")
-        plt.ylabel("accuracy")
-        plt.legend()
+        ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc = random_forest(total_df)
+        print(ls_accuracy)
+        all_ls_accuracy.append(ls_accuracy[0])
+        all_ls_precision.append(ls_precision[0])
+        all_ls_recall.append(ls_recall[0])
+        all_ls_f1.append(ls_f1[0])
+        all_ls_auc.append(ls_auc[0])
+    y_pos = np.arange(len(ls_paths))
+    plt.bar(y_pos, all_ls_accuracy)
+    plt.xticks(y_pos, ls_paths)
+    plt.ylabel("accuracy")
     plt.show()
