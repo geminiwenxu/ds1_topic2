@@ -1,12 +1,12 @@
 import streamlit as st
 import matplotlib.pyplot as plt
 import pandas as pd
-from classification import combine, logistic_reg
+from classifier import combine, logistic_reg
 import numpy as np
 from config import Config
 from preprocessing import read_original_data, data_ratio, convert_to_numerical
 from undersample import combine_data, read_numerical_data
-from classification import logistic_reg
+from classifier import logistic_reg
 import altair as alt
 
 

@@ -5,7 +5,7 @@ from sklearn.metrics import pairwise_distances_argmin_min
 from sklearn.neighbors import NearestNeighbors
 from preprocessing import read_original_data, convert_to_numerical
 from config import Config
-from classification import logistic_reg
+from classifier import logistic_reg
 
 
 def read_numerical_data(numerical_df):
