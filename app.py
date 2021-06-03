@@ -1,6 +1,6 @@
 import streamlit as st
 from front_end import bank_marketing
-
+from WineQuality.process_winequality import wine_quality
 
 class MultiApp:
     """Framework for combining multiple streamlit applications.
@@ -76,7 +76,7 @@ if __name__ == '__main__':
     #     pass
     app = MultiApp()
     app.add_app("Bank Marketing", bank_marketing)
-    app.add_app("Wine Quality", bar)
+    app.add_app("Wine Quality", wine_quality)
     app.add_app("Balanced and scale", bar)
     app.add_app("Adult dataset", bar)
     app.run()
