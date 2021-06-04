@@ -1,7 +1,7 @@
-from TingYu import measurement_table
+from WineQuality import measurement_table
 import pandas as pd
 import numpy as np
-import streamlit as st
+
 
 
 def combine_raw_data(
@@ -50,7 +50,7 @@ def RS(data, algo_name, label='quality'):
     df3_plot = measurement_table.transform(df3)
     return acc3, df3_plot, train_df3, AUC3
 
-def n_near_Kmean(data, n_clusters, n_neighbour, algo_name, label='quality'):
+def n_near_Kmean(data, n_clusters, algo_name, n_neighbour=1, label='quality'):
     X_train, y_train, X_test, y_test = measurement_table.train_test(data, label)
     count3 = pd.DataFrame()
     count3[label] = y_train
@@ -58,7 +58,7 @@ def n_near_Kmean(data, n_clusters, n_neighbour, algo_name, label='quality'):
 
     df_count = count3.groupby([label]).size().reset_index(name='counts')
     min_count = np.min(df_count['counts'])
-    if n_neighbour>min_count:
+    if n_neighbour=='n':
         n_neighbour=min_count
     X_train_neighbor, y_train_neighbor = measurement_table.N_neighbor(X_train, y_train, n_clusters=n_clusters, n_neighbor=n_neighbour)
 
@@ -77,4 +77,5 @@ def centroid_Kmean(data, n_clusters, algo_name, label='quality'):
     df6_plot = measurement_table.transform(df6)
     df6_plot['index'] = df6_plot['index'].astype('int')
     df6_plot['index'] = df6_plot['index']+3
+    df6_plot['index'] = df6_plot.loc[df6_plot['index']<=9]
     return acc6, df6_plot, train_df6, AUC6

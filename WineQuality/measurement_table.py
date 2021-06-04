@@ -110,12 +110,13 @@ def undersampling(X_train, y_train):
 
 
 def centroid(X_train, X_test, n_clusters):
-    kmeans = KMeans(n_clusters=n_clusters, init='k-means++', random_state=0).fit(X_train)
+    X = pd.concat([X_train, X_test], ignore_index=True)
+    kmeans = KMeans(n_clusters=n_clusters, init='k-means++', random_state=0).fit(X)
+    X['quality'] = kmeans.labels_
     y_train = np.arange(0, n_clusters)
     centroid = kmeans.cluster_centers_
-    kmeans = KMeans(n_clusters=n_clusters, init='k-means++', random_state=0).fit(X_test)
-    y_test = kmeans.labels_
-    return centroid, y_train, y_test
+    X_train, Y_train, X_test, Y_test = train_test(X, 'quality')
+    return centroid, y_train, Y_test
 
 
 def clustering(X_train, n_clusters):
@@ -227,6 +228,7 @@ def make_seaborn_scatter_plot(
         plot_type: str,
         hue: str,
         fontsize: int,
+        rotate_xlabel: bool,
         xfrequency: int = None,
         figsize: tuple = (10, 5),
 ):
@@ -287,7 +289,7 @@ def make_seaborn_scatter_plot(
     xmin, xmax = ax.get_xlim()
     ax.set_xlim(xmin, xmax + 1.7)
     ax.tick_params(axis="x", labelsize=12)
-    ax.legend(loc='lower right', fontsize=10)
+    ax.legend(loc='lower right', fontsize=15)
     f.canvas.draw()
     ax.set_xticklabels(ax.get_xticklabels(), fontsize=fontsize)
     ax.set_yticklabels(ax.get_yticklabels(), fontsize=fontsize)
@@ -296,6 +298,15 @@ def make_seaborn_scatter_plot(
             label.set_visible(False)
     ax.spines['right'].set_visible(False)
     ax.spines['top'].set_visible(False)
+
+    if rotate_xlabel:
+        # rotate label
+        ax.set_xticklabels(
+            ax.get_xticklabels(),
+            rotation=30,
+            ha="right",
+            fontsize=fontsize,
+        )
     f.tight_layout()
     return f, ax
 

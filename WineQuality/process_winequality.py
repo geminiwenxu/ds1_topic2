@@ -4,11 +4,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import WineQuality.Methods
 import WineQuality.measurement_table
+import os
+from pathlib import Path
 
 def wine_quality():
     st.set_option('deprecation.showPyplotGlobalUse', False)
-    red_wine_dir = '/Users/ting-yuho/Desktop/DS1/finalProject/redwine-quality.csv'
-    white_wine_dir = '/Users/ting-yuho/Desktop/DS1/finalProject/redwine-quality.csv'
+    path = Path(__file__).cwd()
+    red_wine_dir = os.path.join(path, 'Wine_Data', 'redwine-quality.csv')
+    white_wine_dir = os.path.join(path, 'Wine_Data', 'whitewine-quality.csv')
     raw_df, count0 = WineQuality.Methods.combine_raw_data(data_red_dir=red_wine_dir, data_white_dir=white_wine_dir)
     st.header('Wine Quality data set')
     st.dataframe(raw_df)
@@ -23,9 +26,6 @@ def wine_quality():
     st.header('selected algo：' + algo_option)
 
     num_cluster = st.number_input("Number of cluster")
-    num_neighbour = st.number_input("Number of neighbour")
-    num_neighbour = np.floor(num_neighbour)
-    num_neighbour = int(num_neighbour)
     num_cluster = np.floor(num_cluster)
     num_cluster = int(num_cluster)
     acc1, df1_plot, train_df1, AUC1 = WineQuality.Methods.imbalance(raw_df, algo_option)
@@ -35,7 +35,7 @@ def wine_quality():
         acc2, df2_plot, train_df2, AUC2 = WineQuality.Methods.RS_Kmean(raw_df, n_clusters=num_cluster,
                                                                    algo_name=algo_option)
         acc4, df4_plot, train_df4, AUC4 = WineQuality.Methods.n_near_Kmean(raw_df, n_clusters=num_cluster,
-                                                                           n_neighbour=num_neighbour, algo_name=algo_option)
+                                                                           n_neighbour='n', algo_name=algo_option)
         acc5, df5_plot, train_df5, AUC5 = WineQuality.Methods.n_near_Kmean(raw_df, n_clusters=num_cluster,
                                                                            n_neighbour=1, algo_name=algo_option)
         acc6, df6_plot, train_df6, AUC6 = WineQuality.Methods.centroid_Kmean(raw_df, num_cluster, algo_name=algo_option)
@@ -46,11 +46,11 @@ def wine_quality():
                                       'n near neighbours and Kmean++', 'top 1 near neighbours and Kmean++',
                                       'centroid and Kmean++']})
     option = st.sidebar.selectbox(
-        'Metrics selection (k=10) ',
+        'Metrics selection',
         ['Accuracy', 'Precision', 'Recall', 'F1 score', 'AUC'])
     st.header('selected metric：' + option)
     if option == 'Accuracy':
-        f, ax = WineQuality.measurement_table.make_seaborn_scatter_plot(df_acc, 'Methods', 'Accuracy', 'strip', 'Methods', fontsize=15)
+        f, ax = WineQuality.measurement_table.make_seaborn_scatter_plot(df_acc, 'Methods', 'Accuracy', 'strip', 'Methods',rotate_xlabel=True, fontsize=15)
         ax.set_xlabel('Methods', fontsize=15)
         ax.set_ylabel('Accuracy', fontsize=15)
         st.pyplot(f)
