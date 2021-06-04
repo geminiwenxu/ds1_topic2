@@ -11,8 +11,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from config import Config
 from sklearn.naive_bayes import GaussianNB
-from sklearn.ensemble import RandomForestClassifier
-
+from sklearn.ensemble import GradientBoostingClassifier
 
 def combine(path, cols):
     total_df = pd.DataFrame
@@ -133,7 +132,7 @@ def nb(df):
     return ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc
 
 
-def random_forest(df):
+def grad_boost(df):
     X = df[Config.training_cols]
     y = df['y_cat']
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0, stratify=y)
@@ -142,7 +141,7 @@ def random_forest(df):
     ls_recall = []
     ls_f1 = []
     ls_auc = []
-    clf = RandomForestClassifier(max_depth=20, random_state=0)
+    clf = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0, max_depth=20, random_state=0)
     clf.fit(X_train, y_train)
     y_pred = clf.predict(X_test)
     accuracy = metrics.accuracy_score(y_test, y_pred)

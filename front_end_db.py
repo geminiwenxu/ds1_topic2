@@ -1,14 +1,14 @@
 import streamlit as st
 import matplotlib.pyplot as plt
 import pandas as pd
-from classifier import combine, random_forest
+from classifier import combine, grad_boost
 import numpy as np
 from config import Config
 from preprocessing import read_original_data, data_ratio, convert_to_numerical
 from undersample import combine_data, read_numerical_data
 
 
-def front_end_rf(numerical_df, minority_class, majority_class):
+def front_end_db(numerical_df, minority_class, majority_class):
     option = st.sidebar.selectbox(
         'Metrics selection (k=10) ',
         ['Accuracy', 'Precision', 'Recall', 'F1 score', 'AUC'])
@@ -20,7 +20,7 @@ def front_end_rf(numerical_df, minority_class, majority_class):
         all_ls_accuracy = []
         for name in ls_paths:
             total_df = combine(name, cols)
-            ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc = random_forest(total_df)
+            ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc = grad_boost(total_df)
             all_ls_accuracy.append(ls_accuracy[0])
         fig, ax = plt.subplots()
         y_pos = np.arange(len(ls_paths))
@@ -33,7 +33,7 @@ def front_end_rf(numerical_df, minority_class, majority_class):
         all_ls_precision = []
         for name in ls_paths:
             total_df = combine(name, cols)
-            ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc = random_forest(total_df)
+            ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc = grad_boost(total_df)
             all_ls_precision.append(ls_precision[0])
         fig, ax = plt.subplots()
         y_pos = np.arange(len(ls_paths))
@@ -46,7 +46,7 @@ def front_end_rf(numerical_df, minority_class, majority_class):
         all_ls_recall = []
         for name in ls_paths:
             total_df = combine(name, cols)
-            ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc = random_forest(total_df)
+            ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc = grad_boost(total_df)
             all_ls_recall.append(ls_recall[0])
         fig, ax = plt.subplots()
         y_pos = np.arange(len(ls_paths))
@@ -59,7 +59,7 @@ def front_end_rf(numerical_df, minority_class, majority_class):
         all_ls_f1_score = []
         for name in ls_paths:
             total_df = combine(name, cols)
-            ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc = random_forest(total_df)
+            ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc = grad_boost(total_df)
             all_ls_f1_score.append(ls_f1[0])
         fig, ax = plt.subplots()
         y_pos = np.arange(len(ls_paths))
@@ -72,7 +72,7 @@ def front_end_rf(numerical_df, minority_class, majority_class):
         all_ls_auc = []
         for name in ls_paths:
             total_df = combine(name, cols)
-            ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc = random_forest(total_df)
+            ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc = grad_boost(total_df)
             all_ls_auc.append(ls_auc[0])
         fig, ax = plt.subplots()
         y_pos = np.arange(len(ls_paths))
@@ -89,7 +89,7 @@ def front_end_rf(numerical_df, minority_class, majority_class):
     if option == "centroids":
         k = None
         total_df = combine_data(k, option, minority_class, majority_class)
-        ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc = random_forest(total_df)
+        ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc = grad_boost(total_df)
         ls_metrics = [ls_accuracy[0], ls_precision[0], ls_recall[0], ls_f1[0], ls_auc[0]]
         fig, ax = plt.subplots()
         y_pos = np.arange(5)
@@ -101,7 +101,7 @@ def front_end_rf(numerical_df, minority_class, majority_class):
     elif option == "one_neig":
         k = None
         total_df = combine_data(k, option, minority_class, majority_class)
-        ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc = random_forest(total_df)
+        ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc = grad_boost(total_df)
         ls_metrics = [ls_accuracy[0], ls_precision[0], ls_recall[0], ls_f1[0], ls_auc[0]]
         fig, ax = plt.subplots()
         y_pos = np.arange(5)
@@ -116,7 +116,7 @@ def front_end_rf(numerical_df, minority_class, majority_class):
             num_cluster = np.floor(num_cluster)
             num_cluster = int(num_cluster)
             total_df = combine_data(num_cluster, option, minority_class, majority_class)
-            ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc = random_forest(total_df)
+            ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc = grad_boost(total_df)
             ls_metrics = [ls_accuracy[0], ls_precision[0], ls_recall[0], ls_f1[0], ls_auc[0]]
             fig, ax = plt.subplots()
             y_pos = np.arange(5)
@@ -131,7 +131,7 @@ def front_end_rf(numerical_df, minority_class, majority_class):
             num_cluster = np.floor(num_cluster)
             num_cluster = int(num_cluster)
             total_df = combine_data(num_cluster, option, minority_class, majority_class)
-            ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc = random_forest(total_df)
+            ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc = grad_boost(total_df)
             ls_metrics = [ls_accuracy[0], ls_precision[0], ls_recall[0], ls_f1[0], ls_auc[0]]
             fig, ax = plt.subplots()
             y_pos = np.arange(5)
@@ -142,7 +142,7 @@ def front_end_rf(numerical_df, minority_class, majority_class):
     else:
         k = None
         total_df = combine_data(k, option, minority_class, majority_class)
-        ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc = random_forest(total_df)
+        ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc = grad_boost(total_df)
         ls_metrics = [ls_accuracy[0], ls_precision[0], ls_recall[0], ls_f1[0], ls_auc[0]]
         fig, ax = plt.subplots()
         y_pos = np.arange(5)

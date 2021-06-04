@@ -7,7 +7,7 @@ from undersample import combine_data, read_numerical_data
 from front_end_lr import front_end_lg
 from front_end_svm import front_end_svm
 from front_end_nb import front_end_nb
-from front_end_rf import front_end_rf
+from front_end_db import front_end_db
 
 
 def bank_marketing():
@@ -28,7 +28,7 @@ def bank_marketing():
     # ---------------------------------------------------------------------------------------
     option = st.sidebar.selectbox(
         'Algo selection ',
-        ['Logistic Regression', 'Support Vector Machine', 'Naive Bayes', 'Random Forest'])
+        ['Logistic Regression', 'Support Vector Machine', 'Naive Bayes', 'Gradient Boosting'])
     st.header('selected algo：' + option)
 
     if option == "Logistic Regression":
@@ -39,7 +39,7 @@ def bank_marketing():
     elif option == "Naive Bayes":
         front_end_nb(numerical_df, minority_class, majority_class)
     else:
-        front_end_rf(numerical_df, minority_class, majority_class)
+        front_end_db(numerical_df, minority_class, majority_class)
 
     # ---------------------------------------------------------------------------------------
     st.header('Logistic Regression: 100 iterations and k=10')
