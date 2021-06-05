@@ -14,7 +14,7 @@ import ptitprince as pt
 from sklearn import metrics
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import GradientBoostingClassifier
 
 
 
@@ -71,8 +71,8 @@ def train_classifier(X_train, Y_train, X_test, Y_test, algo_name, max_iter=300):
         model = LogisticRegression(random_state=0)
     elif algo_name=='Naive Bayes':
         model = GaussianNB()
-    elif algo_name=='Random Forest':
-        model = RandomForestClassifier(max_depth=2, random_state=0)
+    elif algo_name=='Gradient Boosting':
+        model = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0, max_depth=1, random_state=0)
 
     model.fit(X_train, Y_train)
     Y_predict = model.predict(X_test)
