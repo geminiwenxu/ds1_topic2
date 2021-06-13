@@ -95,7 +95,7 @@ def top_n(K, majority_class, cols):
 
 def combine_data(k, path, minority, majority_class):
     if path == "centroids":
-        df = pd.read_csv("/Users/wenxu/PycharmProjects/DS/Data/centroids.csv", delimiter=',')
+        df = pd.read_csv("Data/centroids.csv", delimiter=',')
         df.columns = Config.cols
         total_df = pd.concat([df, minority])
     elif path == "random":
@@ -104,7 +104,7 @@ def combine_data(k, path, minority, majority_class):
         df.drop(['cluster'], axis=1, inplace=True)
         total_df = pd.concat([df, minority])
     elif path == "one_neig":
-        df = pd.read_csv('/Users/wenxu/PycharmProjects/DS/Data/one_neig.csv', delimiter=',')
+        df = pd.read_csv('Data/one_neig.csv', delimiter=',')
         df.drop(['Unnamed: 0'], axis=1, inplace=True)
         total_df = pd.concat([df, minority])
     elif path == "n_neig":
@@ -112,7 +112,7 @@ def combine_data(k, path, minority, majority_class):
         df = n_neig_sample
         total_df = pd.concat([df, minority])
     else:
-        df = pd.read_csv("/Users/wenxu/PycharmProjects/DS/Data/numerical_data.csv", delimiter=',')
+        df = pd.read_csv("Data/numerical_data.csv", delimiter=',')
         total_df = df
     print(total_df)
     return total_df

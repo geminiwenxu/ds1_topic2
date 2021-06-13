@@ -9,26 +9,26 @@ from sklearn.metrics import classification_report
 
 def combine_data(path):
     total_df = pd.DataFrame
-    minority = pd.read_csv('/Users/wenxu/PycharmProjects/DS/Data/minority_class', delimiter=',')
+    minority = pd.read_csv('Data/minority_class', delimiter=',')
     minority.drop(['Unnamed: 0'], axis=1, inplace=True)
     if path == "centroids":
-        df = pd.read_csv("/Users/wenxu/PycharmProjects/DS/Data/minority_class", delimiter=',')
+        df = pd.read_csv("Data/minority_class", delimiter=',')
         df.columns = cols
         total_df = pd.concat([df, minority])
     elif path == "random":
-        df = pd.read_csv('/Users/wenxu/PycharmProjects/DS/Data/random.csv', delimiter=',')
+        df = pd.read_csv('Data/random.csv', delimiter=',')
         df.drop(['Unnamed: 0', 'cluster'], axis=1, inplace=True)
         total_df = pd.concat([df, minority])
     elif path == "one_neig":
-        df = pd.read_csv('/Users/wenxu/PycharmProjects/DS/Data/one_neig.csv', delimiter=',')
+        df = pd.read_csv('Data/one_neig.csv', delimiter=',')
         df.drop(['Unnamed: 0'], axis=1, inplace=True)
         total_df = pd.concat([df, minority])
     elif path == "n_neig":
-        df = pd.read_csv('/Users/wenxu/PycharmProjects/DS/Data/n_neig.csv', delimiter=',')
+        df = pd.read_csv('Data/n_neig.csv', delimiter=',')
         df.drop(['Unnamed: 0'], axis=1, inplace=True)
         total_df = pd.concat([df, minority])
     else:
-        df = pd.read_csv("/Users/wenxu/PycharmProjects/DS/Data/numerical_data.csv", delimiter=',')
+        df = pd.read_csv("Data/numerical_data.csv", delimiter=',')
         total_df = df
     print(total_df)
     return total_df

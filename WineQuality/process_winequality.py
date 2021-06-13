@@ -10,8 +10,8 @@ from pathlib import Path
 def wine_quality():
     st.set_option('deprecation.showPyplotGlobalUse', False)
     path = Path(__file__).cwd()
-    red_wine_dir = os.path.join(path, 'Wine_Data', 'redwine-quality.csv')
-    white_wine_dir = os.path.join(path, 'Wine_Data', 'whitewine-quality.csv')
+    red_wine_dir = os.path.join(path, 'Wine_data', 'redwine-quality.csv')
+    white_wine_dir = os.path.join(path, 'Wine_data', 'whitewine-quality.csv')
     raw_df, count0 = WineQuality.Methods.combine_raw_data(data_red_dir=red_wine_dir, data_white_dir=white_wine_dir)
     st.header('Wine Quality data set')
     st.dataframe(raw_df)
