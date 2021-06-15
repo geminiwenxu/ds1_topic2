@@ -180,7 +180,7 @@ if __name__ == '__main__':
     for name in ls_paths:
         total_df = combine(name, Config.cols)
         print(total_df.shape)
-        ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc = random_forest(total_df)
+        ls_accuracy, ls_precision, ls_recall, ls_f1, ls_auc = nb(total_df)
         print(ls_accuracy)
         all_ls_accuracy.append(ls_accuracy[0])
         all_ls_precision.append(ls_precision[0])

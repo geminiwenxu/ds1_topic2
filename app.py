@@ -59,8 +59,8 @@ def bar():
 
 
 if __name__ == '__main__':
-    st.title('')
-    st.text("Project: Imbalanced")
+    # st.title('')
+    st.text("Project: Undersampling")
 
     # st.sidebar.title('Dataset')
     # option = st.sidebar.selectbox(
@@ -79,5 +79,4 @@ if __name__ == '__main__':
     app.add_app("Bank Marketing", bank_marketing)
     app.add_app("Wine Quality", wine_quality)
     app.add_app("Balance scale", bs)
-    app.add_app("Adult dataset", bar)
     app.run()

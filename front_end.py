@@ -38,8 +38,8 @@ def bank_marketing():
         front_end_svm(numerical_df, minority_class, majority_class)
     elif option == "Naive Bayes":
         front_end_nb(numerical_df, minority_class, majority_class)
-    else:
-        front_end_db(numerical_df, minority_class, majority_class)
+    # else:
+    #     front_end_db(numerical_df, minority_class, majority_class)
 
     # ---------------------------------------------------------------------------------------
     st.header('Logistic Regression: 100 iterations and k=10')
