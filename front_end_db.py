@@ -1,7 +1,7 @@
 import streamlit as st
 import matplotlib.pyplot as plt
 import pandas as pd
-from classifier import combine, grad_boost
+from classifier import combine
 import numpy as np
 from config import Config
 from preprocessing import read_original_data, data_ratio, convert_to_numerical
